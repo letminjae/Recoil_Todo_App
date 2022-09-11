@@ -57,6 +57,52 @@
        2. `useSetRecoilState()` : atom의 value 값을 변경해주는 리코일의 메소드
        3. `useRecoilState()` : 앞의 useRecoilValue, useSetReocilState가 합쳐진 메소드 => react의 useState와 유사하다.
 
+
+- Selector
+  - Selector는 파생된 State(Derived state)의 일부를 나타낸다.
+  - 기존 State를 가져와서, 기존 State를 이용해 새로운 State를 만들어서 반환할 수 있다. `기존 State를 이용만할 뿐 변형시키지 않는다는 점`이 핵심. `Derived state는 다른 데이터에 의존하는 동적인 데이터를 만들 수 있기 때문에` 강력하다.
+  - 결론적으로 `atom을 여러개 쓰지않고 한개의 atom으로 output을 여러개로 변형`할 수 있다는 점이 중요 포인트이다
+
+  - Selector 사용법
+    1. atom과 마찬가지로 selector도 key가 필요하다.
+    2. *get* : 인자로 객체를 받는다. 그 객체에는 get이 들어가 있음. 이 get funtion으로 atom을 받아올 수 있다. return 값은 atom을 이용한 selector의 value값이 된다.
+
+  ```tsx
+  import { atom, selector } from "recoil";
+
+  export enum Categories {
+    "TO_DO" = "TO_DO",
+    "DOING" = "DOING",
+    "DONE" = "DONE",
+  }
+
+  export interface IToDo {
+    text: string;
+    id: number;
+    category: Categories;
+  }
+
+  export const categoryState = atom<Categories>({
+    key: "category",
+    default: Categories.TO_DO,
+  });
+
+  export const toDoState = atom<IToDo[]>({
+    key: "toDo",
+    default: [],
+    effects_UNSTABLE: [persistAtom],
+  });
+
+  export const toDoselector = selector({
+    key: "toDoSelector",
+    get: ({ get }) => {
+      const toDos = get(toDoState);
+      const category = get(categoryState);
+      return toDos.filter((toDo) => toDo.category === category);
+    },
+  });
+  ```
+
 ## React Hook Form
 
 ### 항상 똑같이 길게 작성하는 Form을 쓰기 싫다면?
