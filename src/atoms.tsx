@@ -38,6 +38,9 @@ export const toDoselector = selector({
   },
 });
 
+// ----------------------------------------------
+// Selector: get, set function 알아보기
+
 export const minuteState = atom({
   key: "minutes",
   default: 0,

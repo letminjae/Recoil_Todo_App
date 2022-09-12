@@ -66,6 +66,31 @@
   - Selector 사용법
     1. atom과 마찬가지로 selector도 key가 필요하다.
     2. *get* : 인자로 객체를 받는다. 그 객체에는 get이 들어가 있음. 이 get funtion으로 atom을 받아올 수 있다. return 값은 atom을 이용한 selector의 value값이 된다.
+      - get 함수만 제공되면 Selector는 읽기만 가능한 RecoilValueReadOnly 객체를 반환한다.
+    3. *set* : Selector를 수정할 수 있다. get과 다르게 set은 인자가 두가지가 들어간다. <br />
+    `set(수정하고 싶은 atom, 새로운 값)`
+      - get과 마찬가지로 인자로 객체를 받는데, 객체에는 set이 들어가있다. 
+      - set의 두번째 인자에는 우리가 보내는 새로운 값을 받는다. (newValue)
+      - set 함수 또한 제공되면 Selector는 쓰기 가능한 RecoilState 객체를 반환한다.
+    
+    ```tsx
+    export const minuteState = atom({
+      key: "minutes",
+      default: 0,
+    });
+
+    export const hourSelector = selector<number>({
+      key: "hours",
+      get: ({ get }) => {
+        const minutes = get(minuteState);
+        return minutes / 60;
+      },
+      set: ({ set }, newValue) => {
+        const minutes = Number(newValue) * 60;
+        set(minuteState, minutes);
+      },
+    });
+    ```
 
   ```tsx
   import { atom, selector } from "recoil";
